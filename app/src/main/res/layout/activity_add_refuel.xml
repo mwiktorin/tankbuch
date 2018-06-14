@@ -1,0 +1,327 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".addrefuel.AddRefuelActivity">
+
+    <android.support.constraint.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/add_refuel_image_datetime"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/add_refuel_layout_date"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/add_refuel_layout_date"
+            app:srcCompat="@drawable/ic_today_onbackground_24dp" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/add_refuel_layout_date"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/add_refuel_layout_time"
+            app:layout_constraintStart_toEndOf="@+id/add_refuel_image_datetime"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <EditText
+                android:id="@+id/add_refuel_date"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/add_refuel_hint_date"
+                android:focusable="false"
+                android:clickable="true"
+                android:textAlignment="textEnd"
+                android:layout_gravity="end"
+                tools:text="12.05.2018" />
+        </android.support.design.widget.TextInputLayout>
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/add_refuel_layout_time"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="@+id/add_refuel_layout_milage"
+            app:layout_constraintStart_toEndOf="@+id/add_refuel_layout_date"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <EditText
+                android:id="@+id/add_refuel_time"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="@string/add_refuel_hint_time"
+                android:clickable="true"
+                android:focusable="false"
+                android:textAlignment="textEnd"
+                android:layout_gravity="end"
+                tools:text="12:32" />
+        </android.support.design.widget.TextInputLayout>
+
+        <ImageView
+            android:id="@+id/add_refuel_image_milage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/add_refuel_layout_milage"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/add_refuel_layout_milage"
+            app:srcCompat="@drawable/ic_directions_car_onbackground_24dp" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/add_refuel_layout_milage"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/add_refuel_text_unit_milage"
+            app:layout_constraintStart_toEndOf="@+id/add_refuel_image_milage"
+            app:layout_constraintTop_toBottomOf="@+id/add_refuel_layout_date">
+
+            <EditText
+                android:id="@+id/add_refuel_milage"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:hint="@string/add_refuel_hint_milage"
+                android:inputType="number"
+                android:textAlignment="textEnd"
+                android:typeface="monospace"
+                tools:text="12000" />
+
+
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/add_refuel_text_unit_milage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="11dp"
+            android:text="@string/unit_milage"
+            android:textColor="@color/onBackground"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/add_refuel_layout_milage"
+            app:layout_constraintStart_toStartOf="@id/add_refuel_text_unit_price_per_litre" />
+
+        <ImageView
+            android:id="@+id/add_refuel_image_gas_station"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/add_refuel_gas_station_id"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/add_refuel_gas_station_id"
+            app:srcCompat="@drawable/ic_local_gas_station_onbackground_24dp" />
+
+        <Spinner
+            android:id="@+id/add_refuel_gas_station_id"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginEnd="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginStart="16dp"
+            android:weightSum="1"
+            android:visibility="gone"
+            app:layout_constraintBottom_toBottomOf="@id/add_refuel_layout_price_per_litre"
+            app:layout_constraintEnd_toStartOf="@+id/add_refuel_layout_price_per_litre"
+            app:layout_constraintStart_toEndOf="@+id/add_refuel_image_gas_station"
+            app:layout_constraintTop_toTopOf="@+id/add_refuel_layout_price_per_litre" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/add_refuel_layout_price_per_litre"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:weightSum="1"
+            app:layout_constraintEnd_toStartOf="@+id/add_refuel_text_unit_milage"
+            app:layout_constraintStart_toEndOf="@+id/add_refuel_gas_station_id"
+            app:layout_constraintTop_toBottomOf="@+id/add_refuel_layout_milage">
+
+            <EditText
+                android:id="@+id/add_refuel_price_per_litre"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:hint="@string/add_refuel_hint_price_per_litre"
+                android:inputType="numberDecimal"
+                android:textAlignment="textEnd"
+                tools:text="1.32" />
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/add_refuel_text_unit_price_per_litre"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="11dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginRight="16dp"
+            android:text="@string/unit_price_per_liter"
+            android:textColor="@color/onBackground"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/add_refuel_layout_price_per_litre"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/add_refuel_layout_price_per_litre" />
+
+        <CheckBox
+            android:id="@+id/add_refuel_missed_refuel"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="8dp"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="16dp"
+            android:checked="false"
+            android:text="@string/add_refuel_hint_missed_refuel"
+            app:layout_constraintEnd_toStartOf="@+id/add_refuel_text_unit_price_per_litre"
+            app:layout_constraintStart_toEndOf="@+id/add_refuel_full_tank"
+            app:layout_constraintTop_toBottomOf="@+id/add_refuel_layout_price_per_litre" />
+
+        <CheckBox
+            android:id="@+id/add_refuel_full_tank"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="8dp"
+            android:layout_marginRight="8dp"
+            android:layout_marginTop="16dp"
+            android:checked="true"
+            android:text="@string/add_refuel_hint_full_tank"
+            app:layout_constraintEnd_toStartOf="@+id/add_refuel_missed_refuel"
+            app:layout_constraintStart_toStartOf="@+id/add_refuel_gas_station_id"
+            app:layout_constraintTop_toBottomOf="@+id/add_refuel_layout_price_per_litre" />
+
+        <ImageView
+            android:id="@+id/add_refuel_image_total_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/add_refuel_layout_price"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/add_refuel_layout_price"
+            app:srcCompat="@drawable/ic_local_atm_onbackground_24dp" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/add_refuel_layout_price"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/add_refuel_text_unit_total_price"
+            app:layout_constraintStart_toEndOf="@+id/add_refuel_image_volume"
+            app:layout_constraintTop_toBottomOf="@+id/add_refuel_missed_refuel">
+
+            <EditText
+                android:id="@+id/add_refuel_price"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:hint="@string/add_refuel_hint_price"
+                android:inputType="numberDecimal"
+                android:textAlignment="textEnd"
+                tools:text="50.43" />
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/add_refuel_text_unit_total_price"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="11dp"
+            android:text="@string/unit_total_price"
+            android:textColor="@color/onBackground"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/add_refuel_layout_price"
+            app:layout_constraintStart_toEndOf="@+id/add_refuel_layout_price_per_litre"
+            tools:text="€" />
+
+        <ImageView
+            android:id="@+id/add_refuel_image_volume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="8dp"
+            app:layout_constraintBottom_toBottomOf="@+id/add_refuel_layout_volume"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/add_refuel_layout_volume"
+            app:srcCompat="@drawable/ic_canister_onbackground_24dp" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/add_refuel_layout_volume"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toStartOf="@+id/add_refuel_text_unit_volume"
+            app:layout_constraintStart_toStartOf="@+id/add_refuel_layout_price"
+            app:layout_constraintTop_toBottomOf="@+id/add_refuel_layout_price">
+
+            <EditText
+                android:id="@+id/add_refuel_volume"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="end"
+                android:hint="@string/add_refuel_hint_volume"
+                android:inputType="numberDecimal"
+                android:textAlignment="textEnd"
+                tools:text="30.21" />
+        </android.support.design.widget.TextInputLayout>
+
+        <TextView
+            android:id="@+id/add_refuel_text_unit_volume"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="11dp"
+            android:text="@string/unit_volume"
+            android:textColor="@color/onBackground"
+            android:textSize="18sp"
+            app:layout_constraintBottom_toBottomOf="@+id/add_refuel_layout_volume"
+            app:layout_constraintStart_toStartOf="@+id/add_refuel_text_unit_total_price"
+            tools:text="L" />
+
+        <Button
+            android:id="@+id/add_refuel_save"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            android:layout_marginEnd="16dp"
+            android:layout_marginLeft="16dp"
+            android:layout_marginRight="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:background="@color/secondary"
+            android:text="@string/add_refuel_button_save"
+            android:textColor="@color/onSecondary"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/add_refuel_layout_volume" />
+
+
+    </android.support.constraint.ConstraintLayout>
+
+</ScrollView>

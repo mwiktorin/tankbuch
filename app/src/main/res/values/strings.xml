@@ -1,0 +1,56 @@
+<resources>
+    <string name="shared_prefs_filename" translatable="false">de.mwiktorin.tankbuch.SHARED_PREFS</string>
+    <string name="preference_key_first_start" translatable="false">first_start</string>
+    <string name="preference_key_gas_type" translatable="false">gas_type</string>
+
+    <string name="app_name">Tankbuch</string>
+    <string name="action_settings">Settings</string>
+
+    <string name="first_start_welcome">Welcome to the Tankbuch app!</string>
+    <string name="first_start_select_gas_type">Please select your gas type:</string>
+    <string name="first_start_start">Start app</string>
+
+    <string name="main_milage_format">%1$s km</string>
+    <string name="main_price_per_liter_format">%1$s €/L</string>
+    <string name="main_total_price_format">%1$s €</string>
+    <string name="main_efficiency_format">%1$s L/100 km</string>
+    <string name="main_efficiency_not_full">tank not full</string>
+    <string name="main_efficiency_missed_refuel">missed refuel</string>
+    <string name="main_efficiency_first">first entry</string>
+
+    <string name="add_refuel_title">Add refuel entry</string>
+    <string name="add_refuel_hint_date">Date</string>
+    <string name="add_refuel_hint_time">Time</string>
+    <string name="add_refuel_hint_milage">Milage</string>
+    <string name="add_refuel_hint_gas_station">Gas station</string>
+    <string name="add_refuel_hint_price_per_litre">Price per litre</string>
+    <string name="add_refuel_hint_full_tank">Full tank</string>
+    <string name="add_refuel_hint_missed_refuel">Missed refuel</string>
+    <string name="add_refuel_hint_price">Total price</string>
+    <string name="add_refuel_hint_volume">Volume</string>
+    <string name="add_refuel_button_save">Save</string>
+    <string name="add_refuel_milage_format_error">Please enter the milage in km</string>
+    <string name="add_refuel_price_negative_error">The price has to be positive</string>
+    <string name="add_refuel_price_format_error">Please enter the price per liter in €</string>
+    <string name="add_refuel_volume_negative_error">The volume has to be positive</string>
+    <string name="add_refuel_volume_format_error">Please enter the price per liter in €</string>
+    <string name="add_refuel_unexpected_error">An unexpected error occurred, we are sorry.</string>
+    <string name="add_refuel_invalid_field">Please make sure that all fields are filled with valid values.</string>
+
+    <string name="unit_milage">km</string>
+    <string name="unit_price_per_liter">€/L</string>
+    <string name="unit_total_price">€</string>
+    <string name="unit_volume">L</string>
+    <string name="unit_efficiency">L/100 km</string>
+    <string name="main_deleted">Deleted refuel entry</string>
+    <string name="main_undo">Undo</string>
+    <string name="first_start_info">Show information about app</string>
+
+
+    <string-array name="gas_types">
+        <item>Diesel</item>
+        <item>Super</item>
+        <item>Super E10</item>
+    </string-array>
+
+</resources>
