@@ -99,13 +99,11 @@
                 android:id="@+id/add_refuel_milage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
                 android:hint="@string/add_refuel_hint_milage"
                 android:inputType="number"
-                android:textAlignment="textEnd"
+                android:gravity="end"
                 android:typeface="monospace"
                 tools:text="12000" />
-
 
         </android.support.design.widget.TextInputLayout>
 
@@ -164,10 +162,9 @@
                 android:id="@+id/add_refuel_price_per_litre"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
+                android:gravity="end"
                 android:hint="@string/add_refuel_hint_price_per_litre"
                 android:inputType="numberDecimal"
-                android:textAlignment="textEnd"
                 tools:text="1.32" />
         </android.support.design.widget.TextInputLayout>
 
@@ -239,10 +236,9 @@
                 android:id="@+id/add_refuel_price"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
                 android:hint="@string/add_refuel_hint_price"
                 android:inputType="numberDecimal"
-                android:textAlignment="textEnd"
+                android:gravity="end"
                 tools:text="50.43" />
         </android.support.design.widget.TextInputLayout>
 
@@ -284,10 +280,9 @@
                 android:id="@+id/add_refuel_volume"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_gravity="end"
                 android:hint="@string/add_refuel_hint_volume"
                 android:inputType="numberDecimal"
-                android:textAlignment="textEnd"
+                android:gravity="end"
                 tools:text="30.21" />
         </android.support.design.widget.TextInputLayout>
 
