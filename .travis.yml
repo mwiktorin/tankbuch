@@ -6,4 +6,4 @@ android:
     - build-tools-27.0.3
     - android-27
 before_install:
-    - openssl aes-256-cbc -K $encrypted_0ce3e507163b_key -iv $encrypted_0ce3e507163b_iv -in google-services.json.enc -out google-services.json -d
+    - openssl aes-256-cbc -K $encrypted_0ce3e507163b_key -iv $encrypted_0ce3e507163b_iv -in app/google-services.json.enc -out app/google-services.json -d
