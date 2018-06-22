@@ -1,4 +1,7 @@
 language: android
+env:
+  global:
+    secure: DUz+Kh5BSScPA8kzs5YcKnXSitFWI00TdzMZMiXTL1fA3b3z23XgFu2H0sA9DpiLNVpscAuF2KcYL8GXPthw0eWt5iniHOSNbPD8mkxWYF+dnqeS11ouficBLXQxn43BBP3r6BfVs5BouB7/mLo+efKP8P1bBHV+pXy48RmVH7GQUWaS/xuWlAlDINg+PrBG3+KTP85OBFQ0Pqr7rXPd5znh+DxqIYGD5phCIv/BK5CZe1uMgq3gkI+kd6zFJ+CNGVVuh/ebMuxQLWEyiQGFKHa3PV1Ktc+/gCrmnTtQDPdm9Sc1s0hwkrMKpfYNpZFQ/hUSpK3YsuEIjklCxA+ExyxzSEoofI/v56rwlKeB0jXK6TLbqIMJEZhfra/KS401BkzBD/z9a8fY4V0eqL16MW3i5YVuQLrSVaVKUyuy3Q9ukD4qofcGfA/uDTuI9pHk2t2SS9N+QQlICAyclXssVo7AWYlHMdE5KPqOuW3aXLwey0A11OoAH4U7KgKBJeVb3GN9Vvt3vmrfDO3bZeKuUb/Ihj8FA4f0Tlpitzg7yEyctzSjR15eUsmZd/LYnhnjE/2Dd2HH3M37ATLNQ2WSsZhq7gqX4zf3tdT2y0UK3odXpPw+S1+7t/xUmFm8SjIN1qVPGvtwu7h2T0oG/aE49/6BeyyakAYmCxkPKGEyOyQ=
 android:
   components:
   - tools
@@ -7,9 +10,18 @@ android:
   - android-27
   - sys-img-armeabi-v7a-android-22
 before_install:
-- openssl aes-256-cbc -K $encrypted_555fd80cc8bb_key -iv $encrypted_555fd80cc8bb_iv
-  -in tankbuch_keystore.jks.enc -out tankbuch_keystore.jks -d
+#- openssl aes-256-cbc -K $encrypted_555fd80cc8bb_key -iv $encrypted_555fd80cc8bb_iv
+#  -in tankbuch_keystore.jks.enc -out tankbuch_keystore.jks -d
 - openssl aes-256-cbc -K $encrypted_555fd80cc8bb_key -iv $encrypted_555fd80cc8bb_iv
   -in google-services.json.enc -out app/google-services.json -d
+#before_deploy:
+#- cp $TRAVIS_BUILD_DIR/.keystore $HOME
+#- cd app/build/outputs/apk/
+#- jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/tankbuch_keystore.jks -storepass $password -keypass $password app-release-unsigned.apk tankbuch_keystore.jks
+# Verification
+#- jarsigner -verify app-release-unsigned.apk
+#- "${ANDROID_HOME}/build-tools/27.0.3/zipalign -v 4 app-release-unsigned.apk app-release-signed.apk"
 script:
-- "./gradlew connectedAndroidTest"
+- ./gradlew build
+- if [ "$TRAVIS_BRANCH" = "master" ]; then ./gradlew assembleRelease; fi
+- if [ "$TRAVIS_BRANCH" = "alpha" ]; then ./gradlew assembleRelease; fi
