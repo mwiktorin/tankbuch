@@ -1,0 +1,37 @@
+# This file contains the fastlane.tools configuration
+# You can find the documentation at https://docs.fastlane.tools
+#
+# For a list of all available actions, check out
+#
+#     https://docs.fastlane.tools/actions
+#
+# For a list of all available plugins, check out
+#
+#     https://docs.fastlane.tools/plugins/available-plugins
+#
+
+# Uncomment the line if you want fastlane to automatically update itself
+# update_fastlane
+
+default_platform(:android)
+
+platform :android do
+  desc "Submit a new alpha build to Google Play"
+  lane :alpha do
+    #gradle(task: "clean assembleRelease")
+    upload_to_play_store(track: 'alpha', apk: 'app/build/outputs/apk/release/app-release.apk')
+  
+    # sh "your_script.sh"
+    # You can also use other beta testing services here
+  end
+
+  desc "Submit a new beta build to Google Play"
+  lane :beta do
+    upload_to_play_store(track: 'beta', apk: 'app/build/outputs/apk/release/app-release.apk')
+  end
+
+  desc "Submit a new release build to Google Play"
+  lane :release do
+    upload_to_play_store(track: 'production', apk: 'app/build/outputs/apk/release/app-release.apk')
+  end
+end

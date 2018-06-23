@@ -10,18 +10,26 @@ android:
   - android-27
   - sys-img-armeabi-v7a-android-22
 before_install:
-#- openssl aes-256-cbc -K $encrypted_555fd80cc8bb_key -iv $encrypted_555fd80cc8bb_iv
-#  -in tankbuch_keystore.jks.enc -out tankbuch_keystore.jks -d
-- openssl aes-256-cbc -K $encrypted_555fd80cc8bb_key -iv $encrypted_555fd80cc8bb_iv
-  -in google-services.json.enc -out app/google-services.json -d
-#before_deploy:
-#- cp $TRAVIS_BUILD_DIR/.keystore $HOME
-#- cd app/build/outputs/apk/
-#- jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/tankbuch_keystore.jks -storepass $password -keypass $password app-release-unsigned.apk tankbuch_keystore.jks
-# Verification
-#- jarsigner -verify app-release-unsigned.apk
-#- "${ANDROID_HOME}/build-tools/27.0.3/zipalign -v 4 app-release-unsigned.apk app-release-signed.apk"
+- openssl aes-256-cbc -K $encrypted_555fd80cc8bb_key -iv $encrypted_555fd80cc8bb_iv -in secrets.zip.enc -out secrets.zip -d
+- unzip secrets.zip
+- mv google-services.json app/google-services.json
+before_deploy:
+- cd app/build/outputs/apk/release/
+- jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/tankbuch_keystore.jks -storepass $password -keypass $password app-release-unsigned.apk tankbuch_keystore.jks
+#Verification
+- jarsigner -verify app-release-unsigned.apk
+- "${ANDROID_HOME}/build-tools/27.0.3/zipalign -v 4 app-release-unsigned.apk app-release-signed.apk"
 script:
 - ./gradlew build
-- if [ "$TRAVIS_BRANCH" = "master" ]; then ./gradlew assembleRelease; fi
-- if [ "$TRAVIS_BRANCH" = "alpha" ]; then ./gradlew assembleRelease; fi
+- if [ "$TRAVIS_BRANCH" = "master" ]; then 
+    ./gradlew assembleRelease
+    fastlane release;
+  fi
+- if [ "$TRAVIS_BRANCH" = "alpha" ]; then 
+    ./gradlew assembleRelease
+    fastlane alpha;
+  fi
+- if [ "$TRAVIS_BRANCH" = "beta" ]; then 
+    ./gradlew assembleRelease
+    fastlane beta;
+  fi
