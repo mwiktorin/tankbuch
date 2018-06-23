@@ -6,11 +6,13 @@ import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.method.DigitsKeyListener;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.util.Date;
@@ -24,6 +26,8 @@ import de.mwiktorin.tankbuch.database.Refuel;
 public class AddRefuelActivity extends AppCompatActivity {
 
     public static final String BUNDLE_PARAM_MILAGE = "milage";
+    private static final String ALL_DIGITS = "0123456789";
+    private static final char SEPARATOR = DecimalFormatSymbols.getInstance().getDecimalSeparator();
 
     private EditText dateEditText;
     private EditText timeEditText;
@@ -104,6 +108,7 @@ public class AddRefuelActivity extends AppCompatActivity {
             }
         });
 
+        pricePerLitreEditText.setKeyListener(DigitsKeyListener.getInstance(ALL_DIGITS + SEPARATOR));
         pricePerLitreEditText.addTextChangedListener(new SimpleTextWatcherAfter() {
             @Override
             public void afterTextChanged(Editable s) {
@@ -111,24 +116,26 @@ public class AddRefuelActivity extends AppCompatActivity {
                     return;
                 }
                 try {
-                    double pricePerLitre = Double.parseDouble(s.toString());
+                    double pricePerLitre = Utils.parse(s.toString());
+
                     if (pricePerLitre < 0) {
                         pricePerLitreEditText.setError(getString(R.string.add_refuel_price_negative_error));
                         return;
                     }
                     if (isEditTextValid(priceEditText)) {
-                        volumeEditText.setText(Utils.round(Double.parseDouble(priceEditText.getText().toString()) / pricePerLitre));
+                        volumeEditText.setText(Utils.round(Utils.parse(priceEditText.getText().toString()) / pricePerLitre));
                     } else {
                         if (isEditTextValid(volumeEditText)) {
-                            priceEditText.setText(Utils.round(Double.parseDouble(priceEditText.getText().toString()) * Double.parseDouble(volumeEditText.getText().toString())));
+                            priceEditText.setText(Utils.round(Utils.parse(priceEditText.getText().toString()) * Double.parseDouble(volumeEditText.getText().toString())));
                         }
                     }
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException | ParseException e) {
                     pricePerLitreEditText.setError(getString(R.string.add_refuel_price_format_error));
                 }
             }
         });
 
+        priceEditText.setKeyListener(DigitsKeyListener.getInstance(ALL_DIGITS + SEPARATOR));
         priceEditText.addTextChangedListener(new SimpleTextWatcherAfter() {
             @Override
             public void afterTextChanged(Editable s) {
@@ -136,24 +143,25 @@ public class AddRefuelActivity extends AppCompatActivity {
                     return;
                 }
                 try {
-                    double price = Double.parseDouble(s.toString());
+                    double price = Utils.parse(s.toString());
                     if (price <= 0) {
                         priceEditText.setError(getString(R.string.add_refuel_price_negative_error));
                         return;
                     }
                     if (isEditTextValid(pricePerLitreEditText)) {
-                        volumeEditText.setText(Utils.round(price / Double.parseDouble(pricePerLitreEditText.getText().toString())));
+                        volumeEditText.setText(Utils.round(price / Utils.parse(pricePerLitreEditText.getText().toString())));
                     } else {
                         if (isEditTextValid(volumeEditText)) {
-                            pricePerLitreEditText.setText(Utils.roundThree(price / Double.parseDouble(volumeEditText.getText().toString())));
+                            pricePerLitreEditText.setText(Utils.roundThree(price / Utils.parse(volumeEditText.getText().toString())));
                         }
                     }
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException | ParseException e) {
                     priceEditText.setError(getString(R.string.add_refuel_price_format_error));
                 }
             }
         });
 
+        volumeEditText.setKeyListener(DigitsKeyListener.getInstance(ALL_DIGITS + SEPARATOR));
         volumeEditText.addTextChangedListener(new SimpleTextWatcherAfter() {
             @Override
             public void afterTextChanged(Editable s) {
@@ -161,19 +169,19 @@ public class AddRefuelActivity extends AppCompatActivity {
                     return;
                 }
                 try {
-                    double volume = Double.parseDouble(s.toString());
+                    double volume = Utils.parse(s.toString());
                     if (volume <= 0) {
                         volumeEditText.setError(getString(R.string.add_refuel_volume_negative_error));
                         return;
                     }
                     if (isEditTextValid(pricePerLitreEditText)) {
-                        priceEditText.setText(Utils.round(volume * Double.parseDouble(pricePerLitreEditText.getText().toString())));
+                        priceEditText.setText(Utils.round(volume * Utils.parse(pricePerLitreEditText.getText().toString())));
                     } else {
                         if (isEditTextValid(pricePerLitreEditText)) {
-                            pricePerLitreEditText.setText(Utils.roundThree(Double.parseDouble(priceEditText.getText().toString()) / volume));
+                            pricePerLitreEditText.setText(Utils.roundThree(Utils.parse(priceEditText.getText().toString()) / volume));
                         }
                     }
-                } catch (NumberFormatException e) {
+                } catch (NumberFormatException | ParseException e) {
                     volumeEditText.setError(getString(R.string.add_refuel_volume_format_error));
                 }
             }
@@ -193,8 +201,8 @@ public class AddRefuelActivity extends AppCompatActivity {
                 r.setMissedRefuel(missedRefuelCheckBox.isChecked());
                 //r.setGasStationId(Long.parseLong(gasStationIdEditText.getText().toString()));
                 r.setMilage(Long.parseLong(milageEditText.getText().toString()));
-                r.setPricePerLitre(Double.parseDouble(pricePerLitreEditText.getText().toString()));
-                r.setVolume(Double.parseDouble(volumeEditText.getText().toString()));
+                r.setPricePerLitre(Utils.parse(pricePerLitreEditText.getText().toString()));
+                r.setVolume(Utils.parse(volumeEditText.getText().toString()));
 
                 new InsertTask(getApplicationContext()).execute(r);
 

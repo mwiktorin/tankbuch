@@ -36,7 +36,7 @@ public class RefuelViewHolder extends RecyclerView.ViewHolder {
         date.setText(Constants.DATE_TIME_FORMAT.format(refuel.getDate()));
         milage.setText(String.format(view.getContext().getString(R.string.main_milage_format), String.valueOf(refuel.getMilage())));
         //holder.gasStation.setText(refuel.getGasStationId() + "");
-        pricePerLitre.setText(String.format(view.getContext().getString(R.string.main_price_per_liter_format), String.valueOf(refuel.getPricePerLitre())));
+        pricePerLitre.setText(String.format(view.getContext().getString(R.string.main_price_per_liter_format), Utils.roundThree(refuel.getPricePerLitre())));
         String priceText = Utils.round(refuel.getVolume() * refuel.getPricePerLitre());
         price.setText(String.format(view.getContext().getString(R.string.main_total_price_format), priceText));
         String efficiencyText = "";
