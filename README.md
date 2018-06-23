@@ -6,3 +6,5 @@ For now, this app is a very simple app for checking the efficiency of your car a
 It is planned to add some more advanced features like graphs and checking the gas prices of nearby gas stations (first only in Germany where an API is available for this).
 
 This app is in a very early stage, so check back later for further information.
+
+If you want to be alpha tester, just [send me an e-mail](mailto:markuswiktorin@gmail.com) and I will add you to the list.
