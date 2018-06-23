@@ -13,23 +13,25 @@ before_install:
 - openssl aes-256-cbc -K $encrypted_555fd80cc8bb_key -iv $encrypted_555fd80cc8bb_iv -in secrets.zip.enc -out secrets.zip -d
 - unzip secrets.zip
 - mv google-services.json app/google-services.json
-before_deploy:
-- cd app/build/outputs/apk/release/
-- jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/tankbuch_keystore.jks -storepass $password -keypass $password app-release-unsigned.apk tankbuch_keystore.jks
-#Verification
-- jarsigner -verify app-release-unsigned.apk
-- "${ANDROID_HOME}/build-tools/27.0.3/zipalign -v 4 app-release-unsigned.apk app-release-signed.apk"
+install:
+- bundle install
 script:
-- ./gradlew build
-- if [ "$TRAVIS_BRANCH" = "master" ]; then 
+- if [ "$TRAVIS_BRANCH" = "master" ] || [ "$TRAVIS_BRANCH" = "alpha" ] || [ "$TRAVIS_BRANCH" = "beta" ]; then
     ./gradlew assembleRelease;
+    
+    cd app/build/outputs/apk/release/;
+    jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore $HOME/tankbuch_keystore.jks -storepass $password -keypass $password app-release-unsigned.apk tankbuch_keystore.jks;
+    jarsigner -verify app-release-unsigned.apk;
+    "${ANDROID_HOME}/build-tools/27.0.3/zipalign -v 4 app-release-unsigned.apk app-release-signed.apk";
+  else
+    ./gradlew build
+  fi
+- if [ "$TRAVIS_BRANCH" = "master" ]; then 
     fastlane release;
   fi
-- if [ "$TRAVIS_BRANCH" = "alpha" ]; then 
-    ./gradlew assembleRelease;
+- if [ "$TRAVIS_BRANCH" = "alpha" ]; then
     fastlane alpha;
   fi
-- if [ "$TRAVIS_BRANCH" = "beta" ]; then 
-    ./gradlew assembleRelease;
+- if [ "$TRAVIS_BRANCH" = "beta" ]; then
     fastlane beta;
   fi
