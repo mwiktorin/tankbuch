@@ -23,7 +23,7 @@ script:
     jarsigner -verify app-release-unsigned.apk;
     "${ANDROID_HOME}/build-tools/27.0.3/zipalign -v 4 app-release-unsigned.apk app-release-signed.apk";
   else
-    ./gradlew build
+    ./gradlew build;
   fi
 - if [ "$TRAVIS_BRANCH" = "master" ]; then 
     fastlane release;
