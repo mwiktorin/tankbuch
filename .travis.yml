@@ -22,14 +22,21 @@ before_deploy:
 script:
 - ./gradlew build
 - if [ "$TRAVIS_BRANCH" = "master" ]; then 
-    ./gradlew assembleRelease
+    ./gradlew assembleRelease;
+  fi
+- if [ "$TRAVIS_BRANCH" = "alpha" ]; then 
+    ./gradlew assembleRelease;
+  fi
+- if [ "$TRAVIS_BRANCH" = "beta" ]; then 
+    ./gradlew assembleRelease;
+  fi
+deploy:
+- if [ "$TRAVIS_BRANCH" = "master" ]; then 
     fastlane release;
   fi
 - if [ "$TRAVIS_BRANCH" = "alpha" ]; then 
-    ./gradlew assembleRelease
     fastlane alpha;
   fi
 - if [ "$TRAVIS_BRANCH" = "beta" ]; then 
-    ./gradlew assembleRelease
     fastlane beta;
   fi
