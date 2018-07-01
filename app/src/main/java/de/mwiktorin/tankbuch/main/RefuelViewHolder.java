@@ -1,6 +1,7 @@
 package de.mwiktorin.tankbuch.main;
 
 import android.content.Context;
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.TextView;
@@ -8,6 +9,7 @@ import android.widget.TextView;
 import de.mwiktorin.tankbuch.Constants;
 import de.mwiktorin.tankbuch.R;
 import de.mwiktorin.tankbuch.Utils;
+import de.mwiktorin.tankbuch.addrefuel.AddRefuelActivity;
 import de.mwiktorin.tankbuch.database.Refuel;
 
 public class RefuelViewHolder extends RecyclerView.ViewHolder {
@@ -29,6 +31,13 @@ public class RefuelViewHolder extends RecyclerView.ViewHolder {
         price = v.findViewById(R.id.main_refuel_entry_price);
         efficiency = v.findViewById(R.id.main_refuel_efficiency);
         view = v;
+        v.setClickable(true);
+        v.setOnLongClickListener(v1 -> {
+            Intent addRefuelIntent = new Intent(v.getContext(), AddRefuelActivity.class);
+            addRefuelIntent.putExtra(AddRefuelActivity.BUNDLE_PARAM_REFUEL, refuel);
+            v.getContext().startActivity(addRefuelIntent);
+            return true;
+        });
     }
 
     public void bindTo(Refuel refuel, Refuel previous) {

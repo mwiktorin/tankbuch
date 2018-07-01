@@ -22,10 +22,12 @@ import de.mwiktorin.tankbuch.R;
 import de.mwiktorin.tankbuch.Utils;
 import de.mwiktorin.tankbuch.tasks.InsertTask;
 import de.mwiktorin.tankbuch.database.Refuel;
+import de.mwiktorin.tankbuch.tasks.UpdateTask;
 
 public class AddRefuelActivity extends AppCompatActivity {
 
     public static final String BUNDLE_PARAM_MILAGE = "milage";
+    public static final String BUNDLE_PARAM_REFUEL = "refuel";
     private static final String ALL_DIGITS = "0123456789";
     private static final char SEPARATOR = DecimalFormatSymbols.getInstance().getDecimalSeparator();
 
@@ -39,6 +41,7 @@ public class AddRefuelActivity extends AppCompatActivity {
     private EditText priceEditText;
     private EditText volumeEditText;
     private Button saveButton;
+    private Refuel refuel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -60,12 +63,15 @@ public class AddRefuelActivity extends AppCompatActivity {
         volumeEditText = findViewById(R.id.add_refuel_volume);
         saveButton = findViewById(R.id.add_refuel_save);
 
-        Date now = new Date();
-        dateEditText.setText(Constants.DATE_FORMAT.format(now));
-        timeEditText.setText(Constants.TIME_FORMAT.format(now));
+        refuel = (Refuel) getIntent().getSerializableExtra(BUNDLE_PARAM_REFUEL);
+
+        Date date = refuel != null ? refuel.getDate() : new Date();
+        dateEditText.setText(Constants.DATE_FORMAT.format(date));
+        timeEditText.setText(Constants.TIME_FORMAT.format(date));
 
         dateEditText.setOnClickListener(v -> {
             Calendar c = Calendar.getInstance();
+            c.setTime(date);
             DatePickerDialog dialog = new DatePickerDialog(AddRefuelActivity.this, (view, year, month, dayOfMonth) -> {
                 c.set(Calendar.YEAR, year);
                 c.set(Calendar.MONTH, month);
@@ -78,6 +84,7 @@ public class AddRefuelActivity extends AppCompatActivity {
 
         timeEditText.setOnClickListener(v -> {
             Calendar c = Calendar.getInstance();
+            c.setTime(date);
             TimePickerDialog dialog = new TimePickerDialog(AddRefuelActivity.this, new TimePickerDialog.OnTimeSetListener() {
                 @Override
                 public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
@@ -89,13 +96,22 @@ public class AddRefuelActivity extends AppCompatActivity {
             dialog.show();
         });
 
-        long milageExtra = getIntent().getLongExtra(BUNDLE_PARAM_MILAGE, -1);
-        if (milageExtra != -1) {
-            milageEditText.setText(milageExtra + "");
-            int start = Math.max(0, (int) Math.round(Math.log10(milageExtra) + 0.5) - 3);
-            milageEditText.setSelection(start, milageEditText.getText().length());
+        if(refuel != null) {
+            fullTankCheckBox.setChecked(refuel.isFullTank());
+            missedRefuelCheckBox.setChecked(refuel.isMissedRefuel());
+            milageEditText.setText(String.valueOf(refuel.getMilage()));
+            pricePerLitreEditText.setText(Utils.roundThree(refuel.getPricePerLitre()));
+            priceEditText.setText(Utils.round(refuel.getPricePerLitre() * refuel.getVolume()));
+            volumeEditText.setText(Utils.round(refuel.getVolume()));
+        } else {
+            long milageExtra = getIntent().getLongExtra(BUNDLE_PARAM_MILAGE, -1);
+            if (milageExtra != -1) {
+                milageEditText.setText(String.valueOf(milageExtra));
+                int start = Math.max(0, (int) Math.round(Math.log10(milageExtra) + 0.5) - 3);
+                milageEditText.setSelection(start, milageEditText.getText().length());
+            }
+            milageEditText.requestFocus();
         }
-        milageEditText.requestFocus();
 
         milageEditText.addTextChangedListener(new SimpleTextWatcherAfter() {
             @Override
@@ -193,10 +209,15 @@ public class AddRefuelActivity extends AppCompatActivity {
                 return;
             }
             try {
-                Refuel r = new Refuel();
-                Date date = Constants.DATE_FORMAT.parse(dateEditText.getText().toString());
+                Refuel r;
+                if(refuel == null) {
+                    r = new Refuel();
+                } else {
+                    r = refuel;
+                }
+                Date saveDate = Constants.DATE_FORMAT.parse(dateEditText.getText().toString());
                 Date time = Constants.TIME_FORMAT.parse(timeEditText.getText().toString());
-                r.setDate(new Date(date.getTime() + time.getTime()));
+                r.setDate(new Date(saveDate.getTime() + time.getTime()));
                 r.setFullTank(fullTankCheckBox.isChecked());
                 r.setMissedRefuel(missedRefuelCheckBox.isChecked());
                 //r.setGasStationId(Long.parseLong(gasStationIdEditText.getText().toString()));
@@ -204,7 +225,11 @@ public class AddRefuelActivity extends AppCompatActivity {
                 r.setPricePerLitre(Utils.parse(pricePerLitreEditText.getText().toString()));
                 r.setVolume(Utils.parse(volumeEditText.getText().toString()));
 
-                new InsertTask(getApplicationContext()).execute(r);
+                if(refuel == null) {
+                    new InsertTask(getApplicationContext()).execute(r);
+                } else {
+                    new UpdateTask(getApplicationContext()).execute(r);
+                }
 
                 finish();
             } catch (ParseException e) {

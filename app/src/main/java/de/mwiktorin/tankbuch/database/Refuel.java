@@ -5,11 +5,12 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 import android.provider.BaseColumns;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.Objects;
 
 @Entity(tableName = Refuel.TABLE_NAME)
-public class Refuel implements BaseColumns {
+public class Refuel implements BaseColumns, Serializable {
 
     public static final String TABLE_NAME = "refuels";
     public static final String COLUMN_DATE = "date";
