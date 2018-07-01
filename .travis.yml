@@ -20,7 +20,7 @@ script:
     ./gradlew assembleRelease;
     jarsigner -verbose -sigalg SHA1withRSA -digestalg SHA1 -keystore ${TRAVIS_BUILD_DIR}/tankbuch_keystore.jks -storepass $password -keypass $password ${TRAVIS_BUILD_DIR}/app/build/outputs/apk/release/app-release-unsigned.apk tankbuch;
     jarsigner -verify app/build/outputs/apk/release/app-release-unsigned.apk;
-    "${ANDROID_HOME}build-tools/27.0.3/zipalign -v 4 ${TRAVIS_BUILD_DIR}/app/build/outputs/apk/release/app-release-unsigned.apk ${TRAVIS_BUILD_DIR}/app/build/outputs/apk/release/app-release-signed.apk";
+    "${ANDROID_HOME}build-tools/27.0.3/zipalign -v 4 app/build/outputs/apk/release/app-release-unsigned.apk app/build/outputs/apk/release/app-release-signed.apk";
   else
     ./gradlew build;
   fi
