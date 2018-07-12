@@ -1,4 +1,4 @@
-package de.mwiktorin.tankbuch.main;
+package de.mwiktorin.tankbuch.refuelList;
 
 import android.support.annotation.NonNull;
 import android.support.v7.recyclerview.extensions.ListAdapter;
