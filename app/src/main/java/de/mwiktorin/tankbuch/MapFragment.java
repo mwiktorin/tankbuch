@@ -19,6 +19,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class MapFragment extends Fragment {
 
     private GoogleMap map;
+    private MapView mapView;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,11 +29,9 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
-        //SupportMapFragment mapFragment = (SupportMapFragment) view.getSupportFragmentManager()
-        //        .findFragmentById(R.id.map);
 
-        MapView mapView = view.findViewById(R.id.map);
+        mapView = view.findViewById(R.id.map);
+        mapView.onCreate(null);
         mapView.getMapAsync(googleMap -> {
             map = googleMap;
             // Add a marker in Sydney and move the camera
@@ -41,5 +40,45 @@ public class MapFragment extends Fragment {
             map.moveCamera(CameraUpdateFactory.newLatLng(sydney));
         });
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        if (mapView != null) {
+            mapView.onResume();
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (mapView != null) {
+            mapView.onPause();
+        }
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        if (mapView != null) {
+            mapView.onStart();
+        }
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        if (mapView != null) {
+            mapView.onStop();
+        }
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mapView != null) {
+            mapView.onDestroy();
+        }
     }
 }
