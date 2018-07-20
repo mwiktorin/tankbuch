@@ -1,5 +1,7 @@
 package de.mwiktorin.tankbuch;
 
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.support.design.widget.BottomNavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentTransaction;
@@ -48,6 +50,12 @@ public class MainActivity extends AppCompatActivity {
         transaction.replace(R.id.main_frame_layout, new RefuelList());
         transaction.commit();
         bottomNavigationView.setSelectedItemId(R.id.tab_menu_refuel_list);
+
+        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_prefs_filename), MODE_PRIVATE);
+        if (sharedPreferences.getBoolean(getString(R.string.preference_key_first_start), true)) {
+            Intent intent = new Intent(this, FirstStartActivity.class);
+            startActivity(intent);
+        }
     }
 
 

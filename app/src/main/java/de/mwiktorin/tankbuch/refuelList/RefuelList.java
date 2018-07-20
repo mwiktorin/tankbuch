@@ -44,13 +44,6 @@ public class RefuelList extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_refuel_list, container, false);
-
-        SharedPreferences sharedPreferences = getContext().getSharedPreferences(getString(R.string.shared_prefs_filename), getContext().MODE_PRIVATE);
-        if (sharedPreferences.getBoolean(getString(R.string.preference_key_first_start), true)) {
-            Intent intent = new Intent(getContext(), FirstStartActivity.class);
-            startActivity(intent);
-        }
-
         setupRecyclerView(view);
 
         LiveData<List<Refuel>> refuelLiveData = AppDatabase.getInstance(getContext()).refuelDao().selectAll();
