@@ -53,4 +53,20 @@
         <item>Super E10</item>
     </string-array>
 
+    <string-array name="gas_types_tankerkoenig">
+        <item>diesel</item>
+        <item>e5</item>
+        <item>e10</item>
+    </string-array>
+    <string name="gas_type_tankerkoenig_all" translatable="false">all</string>
+
+    <string name="tankerkoenig_url">https://creativecommons.tankerkoenig.de/json/list.php</string>
+    <string name="tankerkoenig_url_param_api_key">apikey</string>
+    <string name="tankerkoenig_url_param_radius">rad</string>
+    <string name="tankerkoenig_url_param_type">type</string>
+    <string name="tankerkoenig_url_param_lat">lat</string>
+    <string name="tankerkoenig_url_param_lng">lng</string>
+    <string name="tankerkoenig_url_param_sort">sort</string>
+    <string name="tankerkoenig_sort_dist">dist</string>
+
 </resources>

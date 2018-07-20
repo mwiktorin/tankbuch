@@ -67,23 +67,6 @@ public class RefuelList extends Fragment {
             startActivity(addRefuelIntent);
         });
 
-        /*
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://creativecommons.tankerkoenig.de/json/list.php";
-        GsonRequest<RadiusGasstationResult> request = new GsonRequest<>(url, RadiusGasstationResult.class, null, new Response.Listener<RadiusGasstationResult>() {
-            @Override
-            public void onResponse(RadiusGasstationResult response) {
-                System.out.println("SUCCESS");
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println("ERROR");
-            }
-        });
-        queue.add(request);
-        */
-
         return view;
     }
 

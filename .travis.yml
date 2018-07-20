@@ -17,6 +17,7 @@ before_install:
 - mkdir -p app/src/release/res/values
 - cp google_maps_api.xml app/src/debug/res/values/google_maps_api.xml
 - mv google_maps_api.xml app/src/release/res/values/google_maps_api.xml
+- mv tankerkoenig_key.xml app/src/main/res/values/tankerkoenig_key.xml
 install:
 - bundle install
 script:
