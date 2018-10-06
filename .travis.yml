@@ -6,7 +6,7 @@ android:
   components:
   - tools
   - platform-tools
-  - build-tools-27.0.3
+  - build-tools-28.0.2
   - android-27
   - sys-img-armeabi-v7a-android-22
 before_install:
@@ -29,7 +29,7 @@ script:
   else
     ./gradlew build;
   fi
-- if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_BRANCH" = "master" ]; then 
+- if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_BRANCH" = "master" ]; then
     fastlane release;
   fi
 - if [ "$TRAVIS_PULL_REQUEST" = "false" ] && [ "$TRAVIS_BRANCH" = "alpha" ]; then
