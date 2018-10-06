@@ -22,35 +22,45 @@ import com.google.maps.android.ui.SquareTextView;
 import java.util.HashMap;
 import java.util.Map;
 
-public class MyClusterRenderer extends DefaultClusterRenderer<MapStationItem>{
+import de.mwiktorin.tankbuch.R;
+import de.mwiktorin.tankbuch.Utils;
 
-    private GoogleMap map;
+public class MyClusterRenderer extends DefaultClusterRenderer<MapStationItem> {
 
-    private Map<Double,BitmapDescriptor> mIcons = new HashMap<>();
-    private ShapeDrawable mColoredCircleBackground;
     private final IconGenerator mClusterIconGenerator;
     private final IconGenerator mItemIconGenerator;
     private final float mDensity;
+    private Context context;
+    private GoogleMap map;
+    private Map<Double, BitmapDescriptor> mIcons = new HashMap<>();
+    private ShapeDrawable mColoredCircleBackground;
+    private double medium = 100;
+    private double high = 200;
+    private double best = 200;
 
     public MyClusterRenderer(Context context, GoogleMap map, ClusterManager<MapStationItem> clusterManager) {
         super(context, map, clusterManager);
+        this.context = context;
         this.map = map;
 
         this.mItemIconGenerator = new IconGenerator(context);
 
         this.mClusterIconGenerator = new IconGenerator(context);
         this.mClusterIconGenerator.setContentView(this.makeSquareTextView(context));
-        this.mClusterIconGenerator.setTextAppearance(com.google.maps.android.R.style.amu_ClusterIcon_TextAppearance);
         this.mClusterIconGenerator.setContentPadding(10, 10, 10, 10);
         this.mClusterIconGenerator.setBackground(this.makeClusterBackground());
+        //this.mClusterIconGenerator.setStyle(IconGenerator.STYLE_GREEN);
         this.mDensity = context.getResources().getDisplayMetrics().density;
+        setMinClusterSize(1);
     }
 
     @Override
     protected void onBeforeClusterItemRendered(MapStationItem mapStationItem, MarkerOptions markerOptions) {
-        Bitmap icon = mItemIconGenerator.makeIcon(mapStationItem.getPrice() + " €");
+        mItemIconGenerator.setStyle(getStyle(mapStationItem.getPrice()));
+        Bitmap icon = mItemIconGenerator.makeIcon(mapStationItem.getSnippet());
         markerOptions.icon(BitmapDescriptorFactory.fromBitmap(icon));
     }
+
 
     @Override
     protected void onBeforeClusterRendered(Cluster<MapStationItem> cluster, MarkerOptions markerOptions) {
@@ -58,22 +68,30 @@ public class MyClusterRenderer extends DefaultClusterRenderer<MapStationItem>{
         for (MapStationItem item : cluster.getItems()) {
             minPrice = item.getPrice() < minPrice ? item.getPrice() : minPrice;
         }
-        BitmapDescriptor descriptor = this.mIcons.get(minPrice);
-        if (descriptor == null) {
-            this.mColoredCircleBackground.getPaint().setColor(this.getColor(minPrice));
-            descriptor = BitmapDescriptorFactory.fromBitmap(this.mClusterIconGenerator.makeIcon(cluster.getSize() + " ab\n" + minPrice + " €"));
-            this.mIcons.put(minPrice, descriptor);
-        }
+        mClusterIconGenerator.setStyle(getStyle(minPrice));
+        BitmapDescriptor descriptor = BitmapDescriptorFactory.fromBitmap(this.mClusterIconGenerator.makeIcon(cluster.getSize() + " ab\n" + Utils
+                .round(minPrice - 0.005) + "€"));
 
         markerOptions.icon(descriptor);
     }
 
-    protected int getColor(double minPrice) {
-        float hueRange = 220.0F;
-        float sizeRange = 300.0F;
-        float size = Math.min((float)minPrice, 300.0F);
-        float hue = (300.0F - size) * (300.0F - size) / 90000.0F * 220.0F;
-        return Color.HSVToColor(new float[]{hue, 1.0F, 0.6F});
+    public void setPriceRanges(double best, double medium, double high) {
+        this.best = best;
+        this.medium = medium;
+        this.high = high;
+    }
+
+    protected int getStyle(double price) {
+        if(price == best) {
+            return IconGenerator.STYLE_BLUE;
+        }
+        if(price < medium) {
+            return IconGenerator.STYLE_GREEN;
+        }
+        if (price < high) {
+            return IconGenerator.STYLE_ORANGE;
+        }
+        return IconGenerator.STYLE_RED;
     }
 
     private LayerDrawable makeClusterBackground() {
@@ -81,7 +99,7 @@ public class MyClusterRenderer extends DefaultClusterRenderer<MapStationItem>{
         ShapeDrawable outline = new ShapeDrawable(new OvalShape());
         outline.getPaint().setColor(-2130706433);
         LayerDrawable background = new LayerDrawable(new Drawable[]{outline, this.mColoredCircleBackground});
-        int strokeWidth = (int)(this.mDensity * 3.0F);
+        int strokeWidth = (int) (this.mDensity * 3.0F);
         background.setLayerInset(1, strokeWidth, strokeWidth, strokeWidth, strokeWidth);
         return background;
     }
@@ -91,7 +109,7 @@ public class MyClusterRenderer extends DefaultClusterRenderer<MapStationItem>{
         ViewGroup.LayoutParams layoutParams = new ViewGroup.LayoutParams(-2, -2);
         squareTextView.setLayoutParams(layoutParams);
         squareTextView.setId(com.google.maps.android.R.id.amu_text);
-        int twelveDpi = (int)(12.0F * this.mDensity);
+        int twelveDpi = (int) (12.0F * this.mDensity);
         squareTextView.setPadding(twelveDpi, twelveDpi, twelveDpi, twelveDpi);
         return squareTextView;
     }

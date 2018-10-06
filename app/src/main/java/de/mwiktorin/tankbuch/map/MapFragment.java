@@ -4,7 +4,6 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.location.Location;
-import android.location.LocationListener;
 import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
@@ -24,6 +23,11 @@ import com.google.android.gms.maps.MapView;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.maps.android.clustering.ClusterManager;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+
 import de.mwiktorin.tankbuch.GsonRequest;
 import de.mwiktorin.tankbuch.R;
 import de.mwiktorin.tankbuch.RadiusGasstationResult;
@@ -34,12 +38,17 @@ public class MapFragment extends Fragment {
     private static final long LOCATION_UPDATE_TIME = 5000;
     private static final float LOCATION_UPDATE_DISTANCE = 5;
     private static final float INIT_ZOOM_FACTOR = 12;
-    private static final double SEARCH_RADIUS = 25;
+    private static final double SEARCH_RADIUS = 25; // in km
+    private static final double NO_RELOAD_DISTANCE = 10000; // in m
     private GoogleMap map;
     private MapView mapView;
     private LocationManager locationManager;
     private ClusterManager<MapStationItem> clusterManager;
+    private MyClusterRenderer clusterRenderer;
     private RequestQueue requestQueue;
+    private HashSet<RadiusGasstationResult.Station> stations = new HashSet<>();
+    private List<Location> loadedLocations = new ArrayList<>();
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,8 +66,15 @@ public class MapFragment extends Fragment {
             map = googleMap;
             locationManager = (LocationManager) getContext().getSystemService(Context.LOCATION_SERVICE);
             clusterManager = new ClusterManager<>(getContext(), map);
-            clusterManager.setRenderer(new MyClusterRenderer(getContext(), map, clusterManager));
-            map.setOnCameraIdleListener(clusterManager);
+            clusterRenderer = new MyClusterRenderer(getContext(), map, clusterManager);
+            clusterManager.setRenderer(clusterRenderer);
+            map.setOnCameraIdleListener(() -> {
+                clusterManager.onCameraIdle();
+                Location location = new Location(LocationManager.GPS_PROVIDER);
+                location.setLatitude(map.getCameraPosition().target.latitude);
+                location.setLongitude(map.getCameraPosition().target.longitude);
+                locationUpdate(location);
+            });
             map.setOnMarkerClickListener(clusterManager);
             requestLocationUpdates();
         });
@@ -80,28 +96,6 @@ public class MapFragment extends Fragment {
             map.moveCamera(CameraUpdateFactory.newLatLngZoom(new LatLng(lastKnownLocation.getLatitude(), lastKnownLocation.getLongitude()),
                     INIT_ZOOM_FACTOR));
             locationUpdate(lastKnownLocation);
-            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, LOCATION_UPDATE_TIME, LOCATION_UPDATE_DISTANCE, new
-                    LocationListener() {
-                        @Override
-                        public void onLocationChanged(Location location) {
-                            locationUpdate(location);
-                        }
-
-                        @Override
-                        public void onStatusChanged(String provider, int status, Bundle extras) {
-
-                        }
-
-                        @Override
-                        public void onProviderEnabled(String provider) {
-
-                        }
-
-                        @Override
-                        public void onProviderDisabled(String provider) {
-
-                        }
-                    });
         }
     }
 
@@ -127,13 +121,38 @@ public class MapFragment extends Fragment {
                 .appendQueryParameter(tankerkoenigSort, getString(R.string.tankerkoenig_sort_dist))
                 .appendQueryParameter(tankerkoenigApiKey, apikey)
                 .build();
-        GsonRequest<RadiusGasstationResult> request = new GsonRequest<>(requestUri.toString(), RadiusGasstationResult.class, null, response -> {
-            //TODO handle empty response
-            for (RadiusGasstationResult.Station station : response.stations) {
-                clusterManager.addItem(new MapStationItem(new LatLng(station.lat, station.lng), station.e5 + " €", station.name, station.e5));
+        if (!isLocationLoaded(location)) {
+            GsonRequest<RadiusGasstationResult> request = new GsonRequest<>(requestUri.toString(), RadiusGasstationResult.class, null, response -> {
+                //TODO handle empty response
+                loadedLocations.add(location);
+                for (RadiusGasstationResult.Station station : response.stations) {
+                    if (stations.contains(station) || station.e5 < 0.1) {
+                        continue;
+                    }
+                    stations.add(station);
+                    clusterManager.addItem(new MapStationItem(new LatLng(station.lat, station.lng), station.name, station.e5));
+                }
+                List<Double> prices = new ArrayList<>();
+                for(RadiusGasstationResult.Station s : stations) {
+                    prices.add(s.e5);
+                }
+                Collections.sort(prices);
+                clusterRenderer.setPriceRanges(prices.get(0), prices.get((int) (prices.size() * 0.33)), prices.get((int) (prices.size() * 0.66)));
+                clusterManager.cluster();
+            }, error -> {
+                System.out.println("ERROR, request was " + requestUri.toString());
+            }); //TODO handle error
+            requestQueue.add(request);
+        }
+    }
+
+    private boolean isLocationLoaded(Location location) {
+        for (Location l : loadedLocations) {
+            if (l.distanceTo(location) < NO_RELOAD_DISTANCE) {
+                return true;
             }
-        }, error -> System.out.println("ERROR")); //TODO handle error
-        requestQueue.add(request);
+        }
+        return false;
     }
 
     @Override
