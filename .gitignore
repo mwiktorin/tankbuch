@@ -8,3 +8,5 @@
 .externalNativeBuild
 secrets.zip
 tankbuch_play_secret_file.json
+*google_maps_api.xml
+*tankerkoenig_key.xml

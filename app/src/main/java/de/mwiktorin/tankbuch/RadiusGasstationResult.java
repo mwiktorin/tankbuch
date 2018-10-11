@@ -30,12 +30,13 @@ public class RadiusGasstationResult {
 }
     */
     public String ok;
+    public String message;
     public String license;
     public String data;
     public String status;
     public Station[] stations;
 
-    class Station {
+    public class Station {
         public String id;
         public String name;
         public String brand;

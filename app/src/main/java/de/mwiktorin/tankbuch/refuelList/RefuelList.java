@@ -1,4 +1,4 @@
-package de.mwiktorin.tankbuch.main;
+package de.mwiktorin.tankbuch.refuelList;
 
 import android.arch.lifecycle.LiveData;
 import android.content.Intent;
@@ -7,16 +7,18 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v4.app.Fragment;
 import android.support.v7.util.DiffUtil;
 import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.support.v7.widget.helper.ItemTouchHelper;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 
 import java.util.List;
 
@@ -28,60 +30,41 @@ import de.mwiktorin.tankbuch.R;
 import de.mwiktorin.tankbuch.database.AppDatabase;
 import de.mwiktorin.tankbuch.database.Refuel;
 
-public class MainActivity extends AppCompatActivity {
+public class RefuelList extends Fragment {
 
     private RecyclerView recyclerView;
     private RefuelListAdapter adapter;
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-        Toolbar actionbar = (Toolbar) findViewById(R.id.main_actionbar);
-        setSupportActionBar(actionbar);
+    }
 
-        SharedPreferences sharedPreferences = getSharedPreferences(getString(R.string.shared_prefs_filename), MODE_PRIVATE);
-        if (sharedPreferences.getBoolean(getString(R.string.preference_key_first_start), true)) {
-            Intent intent = new Intent(this, FirstStartActivity.class);
-            startActivity(intent);
-        }
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_refuel_list, container, false);
+        setupRecyclerView(view);
 
-        setupRecyclerView();
-
-        LiveData<List<Refuel>> refuelLiveData = AppDatabase.getInstance(this).refuelDao().selectAll();
+        LiveData<List<Refuel>> refuelLiveData = AppDatabase.getInstance(getContext()).refuelDao().selectAll();
         refuelLiveData.observe(this, (list) -> {
             adapter.submitList(list);
         });
 
-        FloatingActionButton addButton = findViewById(R.id.main_add_button);
-        addButton.setOnClickListener(view -> {
-            Intent addRefuelIntent = new Intent(MainActivity.this, AddRefuelActivity.class);
+        FloatingActionButton addButton = view.findViewById(R.id.main_add_button);
+        addButton.setOnClickListener(v -> {
+            Intent addRefuelIntent = new Intent(getContext(), AddRefuelActivity.class);
             if (adapter.getItemCount() > 0 && adapter.getRefuel(0) != null ) {
                 addRefuelIntent.putExtra(AddRefuelActivity.BUNDLE_PARAM_MILAGE, adapter.getRefuel(0).getMilage());
             }
             startActivity(addRefuelIntent);
         });
 
-        /*
-        RequestQueue queue = Volley.newRequestQueue(this);
-        String url = "https://creativecommons.tankerkoenig.de/json/list.php";
-        GsonRequest<RadiusGasstationResult> request = new GsonRequest<>(url, RadiusGasstationResult.class, null, new Response.Listener<RadiusGasstationResult>() {
-            @Override
-            public void onResponse(RadiusGasstationResult response) {
-                System.out.println("SUCCESS");
-            }
-        }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println("ERROR");
-            }
-        });
-        queue.add(request);
-        */
+        return view;
     }
 
-    private void setupRecyclerView() {
-        recyclerView = findViewById(R.id.main_recycler_view);
+    private void setupRecyclerView(View view) {
+        recyclerView = view.findViewById(R.id.main_recycler_view);
 
         DiffUtil.ItemCallback<Refuel> diffCallback =
                 new DiffUtil.ItemCallback<Refuel>() {
@@ -97,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
                 };
         adapter = new RefuelListAdapter(diffCallback);
         recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+        recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
 
         recyclerView.addItemDecoration(new DividerItemDecoration(recyclerView.getContext(), DividerItemDecoration.VERTICAL));
 
@@ -110,33 +93,13 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onSwiped(RecyclerView.ViewHolder viewHolder, int direction) {
                 Refuel deletedItem = ((RefuelViewHolder)viewHolder).getRefuel();
-                new DeleteTask(getApplicationContext()).execute(deletedItem.getId());
+                new DeleteTask(getContext()).execute(deletedItem.getId());
                 Snackbar.make(recyclerView, R.string.main_deleted, Snackbar.LENGTH_LONG).setAction(R.string.main_undo, v -> {
-                    new InsertTask(getApplicationContext()).execute(deletedItem);
+                    new InsertTask(getContext()).execute(deletedItem);
                 }).show();
             }
 
         };
         new ItemTouchHelper(itemTouchHelperCallback).attachToRecyclerView(recyclerView);
     }
-
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        getMenuInflater().inflate(R.menu.menu_main, menu);
-        return true;
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        int id = item.getItemId();
-        if (id == R.id.action_settings) {
-            return true;
-        }
-        return super.onOptionsItemSelected(item);
-    }
-
-
-
-
-
 }
