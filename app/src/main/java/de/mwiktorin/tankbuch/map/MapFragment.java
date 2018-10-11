@@ -48,7 +48,7 @@ public class MapFragment extends Fragment {
     private RequestQueue requestQueue;
     private HashSet<RadiusGasstationResult.Station> stations = new HashSet<>();
     private List<Location> loadedLocations = new ArrayList<>();
-
+    private int gasType;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -59,6 +59,13 @@ public class MapFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_map, container, false);
+
+        SharedPreferences sharedPreferences = getContext().getSharedPreferences(getString(R.string.shared_prefs_filename), getContext().MODE_PRIVATE);
+        gasType = sharedPreferences.getInt(getString(R.string.preference_key_gas_type), -1);
+        if (gasType == -1) {
+            // TODO handle error
+            gasType = 0;
+        }
 
         mapView = view.findViewById(R.id.map);
         mapView.onCreate(null);
@@ -71,14 +78,15 @@ public class MapFragment extends Fragment {
             map.setOnCameraIdleListener(() -> {
                 clusterManager.onCameraIdle();
                 Location location = new Location(LocationManager.GPS_PROVIDER);
-                location.setLatitude(map.getCameraPosition().target.latitude);
-                location.setLongitude(map.getCameraPosition().target.longitude);
-                locationUpdate(location);
+                if(location.getLongitude() != 0) {
+                    location.setLatitude(map.getCameraPosition().target.latitude);
+                    location.setLongitude(map.getCameraPosition().target.longitude);
+                    locationUpdate(location);
+                }
             });
             map.setOnMarkerClickListener(clusterManager);
             requestLocationUpdates();
         });
-
 
         return view;
     }
@@ -123,18 +131,21 @@ public class MapFragment extends Fragment {
                 .build();
         if (!isLocationLoaded(location)) {
             GsonRequest<RadiusGasstationResult> request = new GsonRequest<>(requestUri.toString(), RadiusGasstationResult.class, null, response -> {
-                //TODO handle empty response
+                if(response.ok.equals("false")) {
+                    //TODO handle empty response
+                    return;
+                }
                 loadedLocations.add(location);
                 for (RadiusGasstationResult.Station station : response.stations) {
-                    if (stations.contains(station) || station.e5 < 0.1) {
+                    if (stations.contains(station) || getGasPrice(station) < 0.1) {
                         continue;
                     }
                     stations.add(station);
-                    clusterManager.addItem(new MapStationItem(new LatLng(station.lat, station.lng), station.name, station.e5));
+                    clusterManager.addItem(new MapStationItem(new LatLng(station.lat, station.lng), station.name, getGasPrice(station), getContext().getResources().getStringArray(R.array.gas_types)[gasType]));
                 }
                 List<Double> prices = new ArrayList<>();
                 for(RadiusGasstationResult.Station s : stations) {
-                    prices.add(s.e5);
+                    prices.add(getGasPrice(s));
                 }
                 Collections.sort(prices);
                 clusterRenderer.setPriceRanges(prices.get(0), prices.get((int) (prices.size() * 0.33)), prices.get((int) (prices.size() * 0.66)));
@@ -144,6 +155,19 @@ public class MapFragment extends Fragment {
             }); //TODO handle error
             requestQueue.add(request);
         }
+    }
+
+    private double getGasPrice(RadiusGasstationResult.Station station) {
+        switch (gasType) {
+            case 0:
+                return station.diesel;
+            case 1:
+                return station.e5;
+            case 2:
+                return station.e10;
+        }
+        //TODO handle error
+        return station.diesel;
     }
 
     private boolean isLocationLoaded(Location location) {

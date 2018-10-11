@@ -10,11 +10,13 @@ public class MapStationItem implements ClusterItem {
     private LatLng position;
     private String name;
     private double price;
+    private String gasType;
 
-    public MapStationItem(LatLng position, String name, double price) {
+    public MapStationItem(LatLng position, String name, double price, String gasType) {
         this.position = position;
         this.name = name;
         this.price = price;
+        this.gasType = gasType;
     }
 
     @Override

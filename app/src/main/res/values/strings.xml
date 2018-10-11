@@ -46,7 +46,6 @@
     <string name="main_undo">Undo</string>
     <string name="first_start_info">Show information about app</string>
 
-
     <string-array name="gas_types">
         <item>Diesel</item>
         <item>Super</item>
